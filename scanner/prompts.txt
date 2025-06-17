@@ -1,0 +1,4 @@
+{
+  "image": "Describe the contents of the uploaded image. If there is any text visible, extract it. If a barcode is provided, summarize the product or information for this barcode: {barcode}",
+  "barcode": "Summarize the product or information for this barcode: {barcode}"
+}

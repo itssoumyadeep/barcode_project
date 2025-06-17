@@ -1,0 +1,4 @@
+{
+  "image": "Read the image. If this is food ingredient list, please summarize and mention who should avoid it.",
+  "barcode": "Summarize the product or information for this barcode: {barcode}"
+}
