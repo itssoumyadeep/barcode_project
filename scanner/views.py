@@ -40,5 +40,6 @@ def scan_barcode(request):
             summary = response.text.split("\n")[0]  # Assuming the first line is the summary
             recommendations = response.text.split("\n")[1] if len(response.text.split("\n")) > 1 else ""
         print(f"Generated summary: {summary}")
+        print(f"Generated recommendations: {recommendations}")
     return render(request, "scanner/index.html", 
                   {"summary": summary,"recommendations": recommendations})
