@@ -41,7 +41,8 @@
             overflow: hidden;
         }
 
-        .summary {
+        .summary,
+        .recommendation {
             background: #222;
             color: #bada55;
             padding: 1em;
@@ -51,19 +52,42 @@
             font-size: 1em;
         }
 
-        button {
-            background: #444;
-            color: #fff;
+        .recommendation {
+            background: #1a1a2a;
+            color: #61dafb;
+        }
+
+        #captureBtn {
+            position: fixed;
+            bottom: 5vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #fff;
             border: none;
-            padding: 1em 2em;
-            border-radius: 6px;
-            font-size: 1em;
-            margin-top: 1em;
-            width: 100%;
-            max-width: 320px;
+            box-shadow: 0 2px 16px rgba(56, 56, 56, 0.18), 0 1.5px 4px rgba(0, 0, 0, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            cursor: pointer;
+            padding: 0;
+            transition: box-shadow 0.2s;
+        }
+
+        #captureBtn:active {
+            box-shadow: 0 1px 8px rgba(56, 56, 56, 0.12);
+        }
+
+        #captureBtn svg {
             display: block;
-            margin-left: auto;
-            margin-right: auto;
+        }
+
+        #captureBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         @media (max-width: 500px) {
@@ -75,13 +99,9 @@
                 font-size: 1em;
             }
 
-            .summary {
+            .summary,
+            .recommendation {
                 font-size: 0.95em;
-            }
-
-            button {
-                font-size: 0.95em;
-                padding: 0.8em 1em;
             }
         }
     </style>
@@ -89,13 +109,19 @@
 
 <body>
     <div class="container">
-        <h1>Barcode Scanner</h1>
+        <h1>Scan for More</h1>
         <div id="reader"></div>
         <form method="POST" enctype="multipart/form-data" id="barcodeForm">
             {% csrf_token %}
             <input type="hidden" name="barcode" id="barcodeInput" />
             <input type="file" name="barcode_image" id="barcodeImageInput" style="display:none;" accept="image/*" />
-            <button type="button" onclick="captureImage()" id="captureBtn">Scan / Capture</button>
+            <button type="button" id="captureBtn" onclick="captureImage()" aria-label="Scan">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                    <circle cx="14" cy="14" r="14" fill="#FF385C" />
+                    <path d="M14 8V20" stroke="white" stroke-width="2" stroke-linecap="round" />
+                    <path d="M8 14H20" stroke="white" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
         </form>
         {% if summary %}
         <div class="summary">
@@ -103,17 +129,37 @@
             <p>{{ summary }}</p>
         </div>
         {% endif %}
+        {% if recommendations %}
+        <div class="recommendation">
+            <strong>Recommendations:</strong>
+            <p>{{ recommendations }}</p>
+        </div>
+        {% endif %}
     </div>
     <script>
+        let isLoading = false;
+
+        function setLoading(loading) {
+            isLoading = loading;
+            const btn = document.getElementById("captureBtn");
+            btn.disabled = loading;
+            document.body.style.cursor = loading ? "wait" : "";
+        }
+
         function onScanSuccess(decodedText, decodedResult) {
             document.getElementById("barcodeInput").value = decodedText;
+            setLoading(true);
             document.getElementById("barcodeForm").submit();
         }
 
         function captureImage() {
+            if (isLoading) return;
+            setLoading(true);
+
             const video = document.querySelector("#reader video");
             if (!video) {
                 alert("Camera not ready!");
+                setLoading(false);
                 return;
             }
             const canvas = document.createElement("canvas");
@@ -140,6 +186,9 @@
             showTorchButtonIfSupported: true,
         });
         html5QrcodeScanner.render(onScanSuccess);
+
+        // Reset loading state on page load
+        window.onload = () => setLoading(false);
     </script>
 </body>
 

@@ -1,4 +1,4 @@
 {
-  "image": "Read the image. If this is food ingredient list, please summarize and mention who should avoid it.",
-  "barcode": "Summarize the product or information for this barcode: {barcode}"
+  "image": "Read the image. If this is food ingredient list, please summarize the ingredients. Provide recommendations on who should avoid this product and why.Reply with exactly two lines: the first line should be the summary, and the second line should be recommendations.",
+  "barcode": "Summarize the product or information for this barcode: {barcode}.If this is food ingredient list, please summarize the ingredients and the source. Provide recommendations on who should avoid this product and why.Reply with exactly two lines: the first line should be the summary, and the second line should be recommendations."
 }

@@ -19,6 +19,7 @@ def load_prompts():
 @csrf_exempt  # For demo; use proper CSRF in production
 def scan_barcode(request):
     summary = ""
+    recommendations = ""
     prompts = load_prompts()
     if request.method == "POST":
         barcode = request.POST.get("barcode")
@@ -31,10 +32,13 @@ def scan_barcode(request):
                 {"text": prompt},
                 {"mime_type": "image/jpeg", "data": image_bytes}
             ])
-            summary = response.text
+            summary = response.text.split("\n")[0]  # Assuming the first line is the summary
+            recommendations=response.text.split("\n")[1] if len(response.text.split("\n")) > 1 else ""
         elif barcode:
             prompt = prompts["barcode"].replace("{barcode}", barcode)
             response = model.generate_content([prompt])
-            summary = response.text
+            summary = response.text.split("\n")[0]  # Assuming the first line is the summary
+            recommendations = response.text.split("\n")[1] if len(response.text.split("\n")) > 1 else ""
         print(f"Generated summary: {summary}")
-    return render(request, "scanner/index.html", {"summary": summary})
+    return render(request, "scanner/index.html", 
+                  {"summary": summary,"recommendations": recommendations})
