@@ -4,10 +4,8 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import os
 import json
+import re
 
-# For future: barcode image processing
-# from pyzbar.pyzbar import decode
-# from PIL import Image
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -18,12 +16,15 @@ def load_prompts():
 
 @csrf_exempt  # For demo; use proper CSRF in production
 def scan_barcode(request):
+    return render(request, "index.html")
+def scanner_home(request):
     summary = ""
-    recommendations = ""
+    recommendation = ""
     prompts = load_prompts()
     if request.method == "POST":
         barcode = request.POST.get("barcode")
         image = request.FILES.get("barcode_image")
+        data =""
         model = genai.GenerativeModel('gemini-1.5-flash')
         if image:
             prompt = prompts["image"].replace("{barcode}", barcode if barcode else "")
@@ -32,14 +33,33 @@ def scan_barcode(request):
                 {"text": prompt},
                 {"mime_type": "image/jpeg", "data": image_bytes}
             ])
-            summary = response.text.split("\n")[0]  # Assuming the first line is the summary
-            recommendations=response.text.split("\n")[1] if len(response.text.split("\n")) > 1 else ""
+            cleaned = re.sub(r'```json|```|Response:\s*', '', response.text).strip()
+            try:
+                data = json.loads(cleaned)
+                summary = data.get("summary", "")
+                recommendation = data.get("recommendation", "")
+            except json.JSONDecodeError as e:
+                print("JSON decode error:", e)
+                summary = "Could not parse summary."
+                recommendation = "Could not parse recommendation."
+
+            print(f"Data: {summary}")
+            print(f"Recommendation: {recommendation}")
         elif barcode:
             prompt = prompts["barcode"].replace("{barcode}", barcode)
             response = model.generate_content([prompt])
-            summary = response.text.split("\n")[0]  # Assuming the first line is the summary
-            recommendations = response.text.split("\n")[1] if len(response.text.split("\n")) > 1 else ""
+            cleaned = re.sub(r'```json|```|Response:\s*', '', response.text).strip()
+            try:
+                data = json.loads(cleaned)
+                summary = data.get("summary", "")
+                recommendation = data.get("recommendation", "")
+            except json.JSONDecodeError as e:
+                print("JSON decode error:", e)
+                summary = "Could not parse summary."
+                recommendation = "Could not parse recommendation."
+
+
         print(f"Generated summary: {summary}")
-        print(f"Generated recommendations: {recommendations}")
-    return render(request, "scanner/index.html", 
-                  {"summary": summary,"recommendations": recommendations})
+        print(f"Generated recommendations: {recommendation}")
+    return render(request, "scanner/scanner_home.html", 
+                  {"summary": summary,"recommendations": recommendation})

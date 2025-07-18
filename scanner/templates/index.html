@@ -1,0 +1,54 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <link rel="stylesheet" href="{% static 'scanner/style.css' %}">
+    <script src="{% static 'scanner/app.js' %}"></script>
+
+    <meta charset="UTF-8" />
+    <title>App Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+</head>
+
+<body>
+    <div class="header">
+        <form class="search-bar" method="get" action="">
+            <input type="text" name="q" placeholder="What do you want to cook..." />
+            <button type="submit" aria-label="Search">
+                <svg width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" stroke="white" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="white" />
+                </svg>
+            </button>
+        </form>
+    </div>
+    <div class="dashboard">
+        <!-- Card 1: Scanner App -->
+        <div class="card">
+            <div class="card-title">Barcode Scanner</div>
+            <div class="card-desc">
+                Scan barcodes or product ingredient lists and get instant summaries and recommendations.
+            </div>
+            <a href="{% url 'scanner_home' %}">
+                <button class="card-btn">Open Scanner</button>
+            </a>
+        </div>
+        <!-- Card 2: Placeholder for another app -->
+        <div class="card">
+            <div class="card-title">App Two</div>
+            <div class="card-desc">
+                Description for the second app goes here. You can add more features or link to another project.
+            </div>
+            <a href="#">
+                <button class="card-btn">Open App Two</button>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

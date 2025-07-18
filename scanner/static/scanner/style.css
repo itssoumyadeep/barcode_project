@@ -1,0 +1,126 @@
+body {
+  background: #fff;
+  color: #222;
+  font-family: "Circular", "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.header {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 1.2em 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.search-bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+  background: #f7f7f7;
+  border-radius: 32px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  padding: 0.5em 1em;
+  margin-top: 0.5em;
+}
+.search-bar input[type="text"] {
+  border: none;
+  background: transparent;
+  font-size: 1em;
+  flex: 1;
+  outline: none;
+  padding: 0.7em 0.5em;
+}
+.search-bar button {
+  background: #ff385c;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2em;
+  margin-left: 0.5em;
+  transition: background 0.2s;
+}
+.search-bar button:hover {
+  background: #e02d4c;
+}
+.dashboard {
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+  max-width: 900px;
+  margin: 2em auto;
+  padding: 1em;
+  justify-content: center;
+}
+.card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px #0002;
+  padding: 2em 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.2s;
+  width: 100%;
+  max-width: 320px;
+  min-width: 220px;
+}
+.card:hover {
+  box-shadow: 0 4px 24px #0003;
+}
+.card-title {
+  font-size: 1.3em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  color: #ff385c;
+}
+.card-desc {
+  font-size: 1em;
+  margin-bottom: 1em;
+  text-align: center;
+  color: #444;
+}
+.card-btn {
+  background: #ff385c;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 0.7em 2em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.card-btn:hover {
+  background: #e02d4c;
+}
+@media (max-width: 900px) {
+  .dashboard {
+    flex-direction: column;
+    gap: 1.5em;
+    align-items: center;
+  }
+  .card {
+    max-width: 95vw;
+  }
+}
+@media (max-width: 500px) {
+  .dashboard {
+    padding: 0.5em;
+  }
+  .card {
+    padding: 1.2em 0.5em;
+  }
+  .search-bar {
+    max-width: 98vw;
+  }
+}

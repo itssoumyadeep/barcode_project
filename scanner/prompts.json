@@ -1,4 +1,4 @@
 {
-  "image": "Read the image. If this is food ingredient list, please summarize the ingredients. Provide recommendations on who should avoid this product and why.Reply with exactly two lines.",
-  "barcode": "Summarize the product or information for this barcode: {barcode}.If this is food ingredient list, please summarize the ingredients and the source. Provide recommendations on who should avoid this product and why.Reply with exactly two lines."
+  "image": "Read the image. If this is food ingredient list, please summarize the ingredients. Provide recommendations on who should avoid this product and why.Reply with exactly two objects in a json: {summary, recommendation}.each should be a string.",
+  "barcode": "Summarize the product or information for this barcode: {barcode}.If this is food ingredient list, please summarize the ingredients and the source. Provide recommendations on who should avoid this product and why.Reply with exactly two objects in a json: {summary, recommendation}.each should be a string."
 }
