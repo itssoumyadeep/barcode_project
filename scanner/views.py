@@ -13,6 +13,31 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 def load_prompts():
     with open(os.path.join(os.path.dirname(__file__), "prompts.json"), "r") as f:
         return json.load(f)
+def get_ingredients_list(food_item):
+    prompt = (
+        f"List the main ingredients for the food item '{food_item}' as a Python list. "
+        "Reply with only the list, nothing else."
+    )
+    model = genai.GenerativeModel('gemini-1.5-flash')
+    response = model.generate_content([prompt])
+    # Clean and parse the response to get a Python list
+    import ast, re
+    cleaned = re.sub(r'```python|```', '', response.text).strip()
+    try:
+        ingredients = ast.literal_eval(cleaned)
+        if isinstance(ingredients, list):
+            return ingredients
+    except Exception:
+        pass
+    return []
+
+def home(request):
+    ingredients = None
+    query = request.GET.get('q')
+    if query:
+        ingredients = get_ingredients_list(query)
+    print
+    return render(request, "home.html", {"ingredients": ingredients})
 
 @csrf_exempt  # For demo; use proper CSRF in production
 def scan_barcode(request):

@@ -9,12 +9,23 @@
     <script src="{% static 'scanner/app.js' %}"></script>
 
     <meta charset="UTF-8" />
-    <title>App Dashboard</title>
+    <title>grocer.com</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
 </head>
 
 <body>
+    <div class="top-bar" align="right">
+        <span class="logo-title">grocer.com</span>
+        <span class="cart-icon">
+            <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+                <circle cx="9" cy="20" r="1.5" fill="#FF385C" />
+                <circle cx="17" cy="20" r="1.5" fill="#FF385C" />
+                <path d="M5 6h2l1.68 9.39a2 2 0 0 0 2 1.61h5.72a2 2 0 0 0 2-1.61L21 8H7" stroke="#222" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </span>
+    </div>
     <div class="header">
         <form class="search-bar" method="get" action="">
             <input type="text" name="q" placeholder="What do you want to cook..." />
