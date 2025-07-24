@@ -34,7 +34,7 @@ def get_ingredients_list(food_item):
 def scan_barcode(request):
     ingredients = None
     #define item_price as a list to hold ingredients and total price
-    item_price = {"ingredients": [], "total_price": 0}
+    item_price = {"ingredients": [], "total_price": 0, "available": {}, "not_available": []}
     query = request.GET.get('q')
     if query:
         ingredients = get_ingredients_list(query)
@@ -50,6 +50,16 @@ def scan_barcode(request):
         #prompts = load_json()
         #prompt = prompts["getting_ingredients"]
         print(ingredients)
+        
+        #get not available ingredients
+        item_price["not_available"] = [ingredient for ingredient in ingredients if ingredient not in pricelist]
+        #get available ingredients and it's price
+        item_price["available"] = {ingredient: pricelist[ingredient] for ingredient in ingredients if ingredient in pricelist}
+        #print the item_price using for loop
+        print("Available ingredients and their prices:")
+        for item, price in item_price["available"].items():
+            print(f"{item}: ${price:.2f}")
+        print("Not available ingredients:")
         print(item_price)
         return render(request, "checkout.html", {"ingredients": ingredients, "item_price": item_price})
     return render(request, "index.html")

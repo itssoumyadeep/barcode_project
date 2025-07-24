@@ -14,14 +14,19 @@
     <div class="checkout">
         <h2>Your Order Summary</h2>
         <ul>
-            {% for item in item_price.ingredients %}
             <li class="item">
-                <span class="item-name">{{ item }}</span>
-
+                <ul>Buy from us</ul>
             </li>
+            {% for item, price in item_price.available.items %}
+            <li class="item-name">{{ item }} : {{ price }}</li>
             {% endfor %}
-
-            <span class="item-price">${{ item_price.total_price }}</span>
+            <span class="item-price"> Total Payable : ${{ item_price.total_price|floatformat:2 }}</span>
+            <li class="item">
+                <ul>Buy from somewhere else</ul>
+            </li>
+            {% for item in item_price.not_available %}
+            <li class="item-name">{{ item }}</li>
+            {% endfor %}
         </ul>
 
 
