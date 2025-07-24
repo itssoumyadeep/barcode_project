@@ -1,4 +1,5 @@
 {
   "image": "Read the image. If this is food ingredient list, please summarize the ingredients. Provide recommendations on who should avoid this product and why.Reply with exactly two objects in a json: {summary, recommendation}.each should be a string.",
-  "barcode": "Summarize the product or information for this barcode: {barcode}.If this is food ingredient list, please summarize the ingredients and the source. Provide recommendations on who should avoid this product and why.Reply with exactly two objects in a json: {summary, recommendation}.each should be a string."
+  "barcode": "Summarize the product or information for this barcode: {barcode}.If this is food ingredient list, please summarize the ingredients and the source. Provide recommendations on who should avoid this product and why.Reply with exactly two objects in a json: {summary, recommendation}.each should be a string.",
+  "getting_ingredients": "List the main ingredients for the food item '{food_item}' as a Python list. Reply with only the list, nothing else."
 }

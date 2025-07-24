@@ -1,0 +1,32 @@
+<!--update the html with checkout theme from css-->
+{% load static %}
+<html>
+
+<head>
+    <link rel="stylesheet" href="{% static 'scanner/style.css' %}">
+    <script src="{% static 'scanner/app.js' %}"></script>
+    <meta charset="UTF-8" />
+    <title>Checkout - grocer.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+</head>
+
+<body>
+    <div class="checkout">
+        <h2>Your Order Summary</h2>
+        <ul>
+            {% for item in item_price.ingredients %}
+            <li class="item">
+                <span class="item-name">{{ item }}</span>
+
+            </li>
+            {% endfor %}
+
+            <span class="item-price">${{ item_price.total_price }}</span>
+        </ul>
+
+
+    </div>
+
+</body>
+
+</html>

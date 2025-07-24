@@ -10,13 +10,12 @@ import re
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-def load_prompts():
-    with open(os.path.join(os.path.dirname(__file__), "prompts.json"), "r") as f:
+def load_json(file_name):
+    with open(os.path.join(os.path.dirname(__file__), file_name), "r") as f:
         return json.load(f)
 def get_ingredients_list(food_item):
-    prompt = (
-        f"List the main ingredients for the food item '{food_item}' as a Python list. "
-        "Reply with only the list, nothing else."
+    prompts = load_json("prompts.json")
+    prompt = prompts["getting_ingredients"].replace("{food_item}", food_item
     )
     model = genai.GenerativeModel('gemini-1.5-flash')
     response = model.generate_content([prompt])
@@ -31,21 +30,34 @@ def get_ingredients_list(food_item):
         pass
     return []
 
-def home(request):
+@csrf_exempt  # For demo; use proper CSRF in production
+def scan_barcode(request):
     ingredients = None
+    #define item_price as a list to hold ingredients and total price
+    item_price = {"ingredients": [], "total_price": 0}
     query = request.GET.get('q')
     if query:
         ingredients = get_ingredients_list(query)
-    print
-    return render(request, "home.html", {"ingredients": ingredients})
-
-@csrf_exempt  # For demo; use proper CSRF in production
-def scan_barcode(request):
+        pricelist = load_json("pricelist.json")
+        #get total pricing for the ingredients
+        if ingredients and isinstance(ingredients, list):
+            total_price = sum(pricelist.get(ingredient, 0) for ingredient in ingredients)
+            #ingredients.append(f"Total Price: ${total_price:.2f}")
+            item_price["ingredients"] = ingredients
+            item_price["total_price"] = total_price
+        else:
+            ingredients = ["No ingredients found or invalid input."]
+        #prompts = load_json()
+        #prompt = prompts["getting_ingredients"]
+        print(ingredients)
+        print(item_price)
+        return render(request, "checkout.html", {"ingredients": ingredients, "item_price": item_price})
     return render(request, "index.html")
+
 def scanner_home(request):
     summary = ""
     recommendation = ""
-    prompts = load_prompts()
+    prompts = load_json("prompts.json")
     if request.method == "POST":
         barcode = request.POST.get("barcode")
         image = request.FILES.get("barcode_image")

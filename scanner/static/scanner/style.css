@@ -134,7 +134,7 @@ body {
 }
 
 /* Responsive for mobile */
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   .dashboard {
     gap: 2vw;
     padding: 0.5em;
@@ -165,4 +165,63 @@ body {
   .logo-title {
     font-size: 1.2em;
   }
+}
+/*update the checkout page css with same theme*/
+.checkout {
+  max-width: 800px;
+  margin: 2em auto;
+  padding: 1em;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 16px #0002;
+}
+.checkout h2 {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #ff385c;
+  margin-bottom: 1em;
+}
+.checkout .item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em;
+  border-bottom: 1px solid #eee;
+}
+.checkout .item:last-child {
+  border-bottom: none;
+}
+.checkout .item-name {
+  font-size: 1.2em;
+  color: #222;
+}
+.checkout .item-price {
+  font-size: 1.2em;
+  color: #ff385c;
+}
+.checkout .total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em;
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #222;
+  border-top: 1px solid #eee;
+}
+.checkout .total span {
+  color: #ff385c;
+}
+.checkout button {
+  background: #ff385c;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 0.9em 2.2em;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: block;
+  width: 100%;
+  margin-top: 1em;
 }
