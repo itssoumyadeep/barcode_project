@@ -5,10 +5,27 @@ from dotenv import load_dotenv
 import os
 import json
 import re
+import threading
 
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+_cached_model_name = None
+_model_lock = threading.Lock()
+
+def get_available_model():
+    global _cached_model_name
+    if _cached_model_name is None:
+        with _model_lock:
+            if _cached_model_name is None:
+                for model in genai.list_models():
+                    if 'generateContent' in model.supported_generation_methods:
+                        _cached_model_name = model.name
+                        break
+                if _cached_model_name is None:
+                    _cached_model_name = 'models/gemini-2.5-flash'  # Fallback
+    return _cached_model_name
 
 def load_json(file_name):
     with open(os.path.join(os.path.dirname(__file__), file_name), "r") as f:
@@ -17,18 +34,7 @@ def get_ingredients_list(food_item):
     prompts = load_json("prompts.json")
     prompt = prompts["getting_ingredients"].replace("{food_item}", food_item)
     
-    # Get the first available model
-    available_model = None
-    for model in genai.list_models():
-        if 'generateContent' in model.supported_generation_methods:
-            print(f"Available model: {model.name}")
-            if available_model is None:
-                available_model = model.name
-    
-    if available_model is None:
-        available_model = 'models/gemini-2.5-flash'  # Fallback
-    
-    model = genai.GenerativeModel(available_model)
+    model = genai.GenerativeModel(get_available_model())
     response = model.generate_content([prompt])
     # Clean and parse the response to get a Python list
     import ast, re
@@ -84,16 +90,7 @@ def scanner_home(request):
         image = request.FILES.get("barcode_image")
         data = ""
         
-        # Get the first available model
-        available_model = None
-        for model in genai.list_models():
-            if 'generateContent' in model.supported_generation_methods:
-                if available_model is None:
-                    available_model = model.name
-        
-        if available_model is None:
-            available_model = 'models/gemini-1.5-flash'  # Fallback
-        model = genai.GenerativeModel(available_model)
+        model = genai.GenerativeModel(get_available_model())
         if image:
             prompt = prompts["image"].replace("{barcode}", barcode if barcode else "")
             image_bytes = image.read()
