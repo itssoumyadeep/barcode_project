@@ -5,22 +5,45 @@ from dotenv import load_dotenv
 import os
 import json
 import re
+import ast
+import logging
 
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
+_cached_model_name = None
+_FALLBACK_MODEL = 'models/gemini-1.5-flash'
+
+def get_gemini_model():
+    """Return a GenerativeModel using the first available model, with caching."""
+    global _cached_model_name
+    if _cached_model_name is None:
+        try:
+            for m in genai.list_models():
+                if 'generateContent' in m.supported_generation_methods:
+                    _cached_model_name = m.name
+                    break
+        except Exception as e:
+            logger.warning("Error listing generative AI models, using fallback: %s", e)
+        if _cached_model_name is None:
+            _cached_model_name = _FALLBACK_MODEL
+        logger.info("Using Gemini model: %s", _cached_model_name)
+    return genai.GenerativeModel(_cached_model_name)
+
 def load_json(file_name):
     with open(os.path.join(os.path.dirname(__file__), file_name), "r") as f:
         return json.load(f)
+
 def get_ingredients_list(food_item):
     prompts = load_json("prompts.json")
-    prompt = prompts["getting_ingredients"].replace("{food_item}", food_item
-    )
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    prompt = prompts["getting_ingredients"].replace("{food_item}", food_item)
+    
+    model = get_gemini_model()
     response = model.generate_content([prompt])
     # Clean and parse the response to get a Python list
-    import ast, re
     cleaned = re.sub(r'```python|```', '', response.text).strip()
     try:
         ingredients = ast.literal_eval(cleaned)
@@ -71,8 +94,9 @@ def scanner_home(request):
     if request.method == "POST":
         barcode = request.POST.get("barcode")
         image = request.FILES.get("barcode_image")
-        data =""
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        data = ""
+        
+        model = get_gemini_model()
         if image:
             prompt = prompts["image"].replace("{barcode}", barcode if barcode else "")
             image_bytes = image.read()
