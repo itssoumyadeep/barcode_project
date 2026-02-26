@@ -8,6 +8,8 @@ import re
 import threading
 
 
+logger = logging.getLogger(__name__)
+
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -30,6 +32,7 @@ def get_available_model():
 def load_json(file_name):
     with open(os.path.join(os.path.dirname(__file__), file_name), "r") as f:
         return json.load(f)
+
 def get_ingredients_list(food_item):
     prompts = load_json("prompts.json")
     prompt = prompts["getting_ingredients"].replace("{food_item}", food_item)
@@ -37,7 +40,6 @@ def get_ingredients_list(food_item):
     model = genai.GenerativeModel(get_available_model())
     response = model.generate_content([prompt])
     # Clean and parse the response to get a Python list
-    import ast, re
     cleaned = re.sub(r'```python|```', '', response.text).strip()
     try:
         ingredients = ast.literal_eval(cleaned)
