@@ -72,18 +72,18 @@ def scan_barcode(request):
             ingredients = ["No ingredients found or invalid input."]
         #prompts = load_json()
         #prompt = prompts["getting_ingredients"]
-        print(ingredients)
+        logger.debug("Ingredients: %s", ingredients)
         
         #get not available ingredients
         item_price["not_available"] = [ingredient for ingredient in ingredients if ingredient not in pricelist]
         #get available ingredients and it's price
         item_price["available"] = {ingredient: pricelist[ingredient] for ingredient in ingredients if ingredient in pricelist}
         #print the item_price using for loop
-        print("Available ingredients and their prices:")
+        logger.debug("Available ingredients and their prices:")
         for item, price in item_price["available"].items():
-            print(f"{item}: ${price:.2f}")
-        print("Not available ingredients:")
-        print(item_price)
+            logger.debug("%s: $%.2f", item, price)
+        logger.debug("Not available ingredients:")
+        logger.debug("item_price: %s", item_price)
         return render(request, "checkout.html", {"ingredients": ingredients, "item_price": item_price})
     return render(request, "index.html")
 
@@ -110,12 +110,9 @@ def scanner_home(request):
                 summary = data.get("summary", "")
                 recommendation = data.get("recommendation", "")
             except json.JSONDecodeError as e:
-                print("JSON decode error:", e)
+                logger.warning("JSON decode error in image response: %s", e)
                 summary = "Could not parse summary."
                 recommendation = "Could not parse recommendation."
-
-            print(f"Data: {summary}")
-            print(f"Recommendation: {recommendation}")
         elif barcode:
             prompt = prompts["barcode"].replace("{barcode}", barcode)
             response = model.generate_content([prompt])
@@ -125,12 +122,11 @@ def scanner_home(request):
                 summary = data.get("summary", "")
                 recommendation = data.get("recommendation", "")
             except json.JSONDecodeError as e:
-                print("JSON decode error:", e)
+                logger.warning("JSON decode error in barcode response: %s", e)
                 summary = "Could not parse summary."
                 recommendation = "Could not parse recommendation."
 
-
-        print(f"Generated summary: {summary}")
-        print(f"Generated recommendations: {recommendation}")
+        logger.debug("Generated summary: %s", summary)
+        logger.debug("Generated recommendations: %s", recommendation)
     return render(request, "scanner/scanner_home.html", 
                   {"summary": summary,"recommendations": recommendation})
